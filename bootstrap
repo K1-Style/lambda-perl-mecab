@@ -11,6 +11,7 @@ my $furl = Furl->new;
 my ($handler, $function) = split /\./, $ENV{_HANDLER}, 2;
 require "$ENV{LAMBDA_TASK_ROOT}/$handler.pl";
 my $func = \&$function;
+my $json = JSON->new();
 
 while(1) {
     my $res = $furl->get("http://$ENV{AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next");
@@ -21,7 +22,7 @@ while(1) {
     $furl->post(
         "http://$ENV{AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$req_id/response",
         [],
-        encode_json($result),
+        $json->encode($result),
     );
 }
 
